@@ -1,0 +1,43 @@
+Query the covid India API and show statewise active cases
+API: https://api.covid19india.org/v4/min/data.min.json
+Active cases = confirmed - (recovered+deceased+others)
+
+
+
+# importing modules
+import json
+import requests
+  
+# storing the url in the form of string
+url = https://api.covid19india.org/v4/min/data.min.json
+
+
+# function to get data from api
+def casesData():
+	# getting the json data by calling api
+	data = ((requests.get(url)).json())
+	states = []
+
+	# getting states
+	for key in data.items():
+		states.append(key[0])
+
+	# getting statewise data
+	for state in states:
+		f = (data[state]['districtData'])
+		tc = []
+		dis = []
+    others = 0
+
+		# getting districtwise data
+		for key in (data[state]['districtData']).items():
+			district = key[0]
+			dis.append(district)
+			confirmed = data[state]['districtData'][district]['confirmed']
+			deceased = data[state]['districtData'][district]['deceased']
+			recovered = data[state]['districtData'][district]['recovered']
+			if district == 'Unknown':
+				confirmed, deceased, recovered = 0, 0, 0, 0
+			tc.append([confirmed, deceased, recovered])
+			active_cases = confirmed - (recovered+deceased+others)
+		print("State",states "Active Cases",active_cases)
