@@ -1,0 +1,16 @@
+
+
+Write a small program to get all AWS EC2 instances in a region and filter them based on the OS installed in them (windows/linux), 
+determine the machine types and report a count of them.
+
+
+for region in $(aws ec2 describe-regions --query 'Regions[].RegionName | sort(@)' --output text); \
+do echo $region; \
+    aws ec2 describe-instances \
+        --region "${region}" \
+        --filter Name=instance-state-name,Values=running \
+        --query 'Reservations[].Instances[*].{PlatformType,InstanceType:InstanceType}' \
+        | jq -r '.[].InstanceType' \
+        | sort \
+        | uniq -c \
+        | sort -r;
